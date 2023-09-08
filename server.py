@@ -1,16 +1,8 @@
 from html import escape
-
-import requests
-import random
-
-from searx.webapp import werkzeug_reloader
-
-from _config import *
-from src import helpers
-
 import json
 import os
-
+import requests
+import random
 
 from flask import (
     Flask,
@@ -22,8 +14,11 @@ from flask import (
 from flask.wrappers import Response
 from searx import webutils
 from searx.search import initialize as search_initialize, SearchQuery, Search, EngineRef
+from searx.webapp import werkzeug_reloader
 
+from _config import *
 from src.services.searchService import SearchService
+from src import helpers
 
 
 app = Flask(__name__, static_folder="static", static_url_path="")
