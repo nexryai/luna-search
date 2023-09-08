@@ -4,7 +4,6 @@ import requests
 import random
 
 from searx.webapp import werkzeug_reloader
-from searx.webutils import highlight_content
 
 from _config import *
 from src import helpers
@@ -164,7 +163,7 @@ def search():
             use_engines = [EngineRef("duckduckgo images", "images"),
                            EngineRef("brave", "images")]
 
-        if category == "reddit":
+        elif category == "reddit":
             query = f"site:reddit.com {original_query}"
             use_engines = [EngineRef("google", "general"),
                            EngineRef("duckduckgo", "general"),
@@ -219,10 +218,10 @@ def search():
         results = frea.optimize(results)
 
         for result in results:
-            # if 'content' in result and result['content']:
-            #     result['content'] = highlight_content(escape(result['content'][:1024]), search_query.query)
-            # if 'title' in result and result['title']:
-            #     result['title'] = highlight_content(escape(result['title'] or ''), search_query.query)
+            if 'content' in result and result['content']:
+                result['content'] = escape(result['content'][:1024])
+            if 'title' in result and result['title']:
+                result['title'] = escape(result['title'] or '')
 
             if 'url' in result:
                 result['pretty_url'] = webutils.prettify_url(result['url'])
