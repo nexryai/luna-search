@@ -4,3 +4,4 @@ bs4
 gunicorn
 requests
 libfrea
+git+https://github.com/searxng/searxng
