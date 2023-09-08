@@ -134,29 +134,6 @@ def img_proxy():
         return Response("Error fetching image", status=500)
 
 
-@app.route('/debug', methods=['GET'])
-def search2():
-
-    # search
-    search_query = SearchQuery(
-            query=request.args.get("q", "").strip(),
-            lang="ja",
-            safesearch=0,
-            pageno=1,
-            time_range="",
-            engineref_list=[EngineRef("goo", "general"),
-                            EngineRef("duckduckgo", "general"),
-                            EngineRef("wikipedia", "general")]
-    )
-
-    search = Search(search_query)  # pylint: disable=redefined-outer-name
-    result_container = search.search()
-
-    # 3. formats without a template
-    response = webutils.get_json_response(search_query, result_container)
-    return Response(response, mimetype='application/json')
-
-
 @app.route("/", methods=["GET", "POST"])
 @app.route("/search", methods=["GET", "POST"])
 def search():
