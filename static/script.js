@@ -168,7 +168,6 @@ const closeButton = document.querySelector('.image-close');
 const imageView = document.querySelector('.image_view');
 const images = document.querySelector('.images');
 const viewImageImg = document.querySelector('.view-image-img');
-const proxyLinkUwu = document.querySelector('.proxy-link-uwu');
 const imageSource = document.querySelector('.image-source');
 const imageViewerLink = document.querySelector('.image-viewer-link');
 const imageSize = document.querySelector('.image-size');
@@ -222,14 +221,14 @@ function showImage() {
   const clickableLink = openImageViewer[currentImageIndex].closest('.clickable');
   const href = clickableLink.getAttribute('href');
   viewImageImg.src = src;
-  proxyLinkUwu.href = src;
-  imageSource.href = href;
+  imageSource.href = src;
   imageViewerLink.href = href;
-  imageSource.textContent = href;
+  imageSource.textContent = src;
   images.classList.remove('images_viewer_hidden');
   imageView.classList.remove('image_hide');
   imageView.classList.add('image_show');
   imageAlt.textContent = alt;
+  imageAlt.href = href;
 
   getImageSize(src).then(size => {
     imageSize.textContent = size;

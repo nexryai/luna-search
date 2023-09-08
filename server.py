@@ -163,6 +163,7 @@ def search():
     if request.method == "GET":
         # get the `q` query parameter from the URL
         query = request.args.get("q", "").strip()
+        category = request.args.get("t", "").strip()
 
         # クエリがないならトップページ
         if query == "":
@@ -176,13 +177,25 @@ def search():
 
 
         # 全角スペースは置き換える
-        query = query.replace("　", " ")
+        original_query = query.replace("　", " ")
+        query = original_query
 
         accept_language = request.headers.get("Accept-Language", "")
         search_language = "en"
 
-        # Accept-LanguageヘッダーにjaがあるならGooエンジンを有効にする
-        if "ja" in accept_language:
+        if category == "image":
+            use_engines = [EngineRef("duckduckgo images", "images"),
+                           EngineRef("brave", "images")]
+
+        if category == "reddit":
+            query = f"site:reddit.com {original_query}"
+            use_engines = [EngineRef("google", "general"),
+                           EngineRef("duckduckgo", "general"),
+                           EngineRef("brave", "general"),
+                           EngineRef("qwant", "general")]
+
+        elif "ja" in accept_language:
+            # Accept-LanguageヘッダーにjaがあるならGooエンジンを有効にする
             # 区切り文字が2個以下なら日本語の結果のみ表示する
             if query.count(" ") <= 2:
                 search_language = "ja"
@@ -208,6 +221,10 @@ def search():
         search = Search(search_query)  # pylint: disable=redefined-outer-name
         search_result = search.search()
 
+        if request.args.get("debug", "").strip() == "true":
+            response = webutils.get_json_response(search_query, search_result)
+            return Response(response, mimetype='application/json')
+
         try:
             snipp = search_result.answers[0]
         except:
@@ -225,10 +242,10 @@ def search():
         results = frea.optimize(results)
 
         for result in results:
-            if 'content' in result and result['content']:
-                result['content'] = highlight_content(escape(result['content'][:1024]), search_query.query)
-            if 'title' in result and result['title']:
-                result['title'] = highlight_content(escape(result['title'] or ''), search_query.query)
+            # if 'content' in result and result['content']:
+            #     result['content'] = highlight_content(escape(result['content'][:1024]), search_query.query)
+            # if 'title' in result and result['title']:
+            #     result['title'] = highlight_content(escape(result['title'] or ''), search_query.query)
 
             if 'url' in result:
                 result['pretty_url'] = webutils.prettify_url(result['url'])
@@ -240,16 +257,24 @@ def search():
                 else:
                     result['publishedDate'] = webutils.searxng_l10n_timespan(result['publishedDate'])
 
-
-
+        if category == "image":
+            return render_template("images.jinja2",
+                                   results=results, p=1, title=f"{query} - TailsX",
+                                   q=f"{original_query}",
+                                   theme=request.cookies.get('theme', DEFAULT_THEME),
+                                   new_tab=request.cookies.get("new_tab"),
+                                   javascript="enabled", DEFAULT_THEME=DEFAULT_THEME,
+                                   type="image", search_type="image", repo_url=REPO, lang="ja", safe=0, check="",
+                                   snipp=snipp, infobox=infobox
+                                   )
 
         return render_template("results.jinja2",
                                results=results, p=1, title=f"{query} - TailsX",
-                               q=f"{query}",
+                               q=f"{original_query}",
                                theme=request.cookies.get('theme', DEFAULT_THEME),
                                new_tab=request.cookies.get("new_tab"),
                                javascript="enabled", DEFAULT_THEME=DEFAULT_THEME,
-                               type="text", search_type="text", repo_url=REPO, lang="ja", safe=0, check="",
+                               type=category, search_type="text", repo_url=REPO, lang="ja", safe=0, check="",
                                snipp=snipp, infobox=infobox
                                )
 
