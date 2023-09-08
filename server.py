@@ -26,16 +26,6 @@ from searx.search import initialize as search_initialize, SearchQuery, Search, E
 from src.services.searchService import SearchService
 
 
-bfp = open("./bangs.json", "r")
-bjson = json.load(bfp)
-bfp.close()
-
-
-
-SEARCH_BANGS = {}
-for bang, url in bjson.items():
-    SEARCH_BANGS[bang] = url
-
 app = Flask(__name__, static_folder="static", static_url_path="")
 app.jinja_env.filters['highlight_query_words'] = helpers.highlight_query_words
 app.jinja_env.globals.update(int=int)

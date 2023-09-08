@@ -45,23 +45,5 @@ VALID_UA_PROMPTS = [
     "what's my user agent",
 ]
 
-
-WHITELISTED_DOMAINS = [
-    "www.google.com",
-    "www.google.fr",
-    "www.google.ca",
-    "www.google.co.uk",
-    "www.google.de",
-    "www.google.com.au",
-    "www.google.co.in",
-    "www.google.co.jp",
-    "www.google.co.kr",
-    "www.google.com.br",
-    "wikipedia.org",
-    "yt.revvy.de",
-    "lite.qwant.com",
-    TORRENTGALAXY_DOMAIN
-]
-
 COOKIE_AGE = 2147483647
 
