@@ -1,0 +1,11 @@
+{% extends "preresults_layout.jinja2" %}
+
+{% block body %}
+    {% if css_style %}
+        <link rel="stylesheet" href="./css/{{ css_style }}">
+    {% endif %}
+    <div style="width: 80%;padding-left: 20%;margin-top: 10%;">
+        <h2>NOT FOUND</h2>
+        <p style="max-width: 100%;">The page you were looking for was not found</p>
+    </div>
+{% endblock %}

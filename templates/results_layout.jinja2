@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ title }}</title>
+    <meta name="description" content="A privacy-respecting, ad-free, self-hosted metasearch engine.">
+    <meta content="{{ title }}" property="og:title">
+    <meta content="A privacy-respecting, ad-free, self-hosted metasearch engine." property="og:description">
+    <meta content="/" property="og:url">
+    <meta content="#5885F4" data-react-helmet="true" name="theme-color">
+    {% if request.cookies.theme %}
+        <link rel="stylesheet" href="./css/{{ request.cookies.theme }}.css">
+    {% else %}
+        <link rel="stylesheet" href="./css/{{ theme }}.css">
+    {% endif %}
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="search" type="application/opensearchdescription+xml" href="url_for('static', filename='opensearch.xml') }}" title="TailsX">
+    <meta http-equiv="Strict-Transport-Security" content="max-age=63072000; includeSubDomains">
+</head>
+
+<body>
+    <form action="/search" id="prev-next-form" class="results-search-container" method="get" autocomplete="off">
+        <h1 class="logomobile"><a class="no-decoration" href="./">Frea<span class="X">X</span></a></h1>
+        <div class="wrapper-results">
+        <input type="text" name="q" value="{{ q }}" id="search-input" />
+        <button id="search-wrapper-ico" class="material-icons-round" name="t" value="{{ type }}">search</button>
+        <input type="submit" class="hide" name="t" value="{{ type }}" />
+        <div class="autocomplete">
+            <ul>
+            </ul>
+        </div>
+    </div>
+    <div class="settings-search-div">
+        <a href="/settings" class="clickable settings-icon-link">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-header-settings" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                <path d="M10.325 4.317c.426 -1.756 2.924 -1.756 3.35 0a1.724 1.724 0 0 0 2.573 1.066c1.543 -.94 3.31 .826 2.37 2.37a1.724 1.724 0 0 0 1.065 2.572c1.756 .426 1.756 2.924 0 3.35a1.724 1.724 0 0 0 -1.066 2.573c.94 1.543 -.826 3.31 -2.37 2.37a1.724 1.724 0 0 0 -2.572 1.065c-.426 1.756 -2.924 1.756 -3.35 0a1.724 1.724 0 0 0 -2.573 -1.066c-1.543 .94 -3.31 -.826 -2.37 -2.37a1.724 1.724 0 0 0 -1.065 -2.572c-1.756 -.426 -1.756 -2.924 0 -3.35a1.724 1.724 0 0 0 1.066 -2.573c-.94 -1.543 .826 -3.31 2.37 -2.37c1 .608 2.296 .07 2.572 -1.065z"></path>
+                <path d="M9 12a3 3 0 1 0 6 0a3 3 0 0 0 -6 0"></path>
+            </svg>
+        </a>
+        <a href="/settings" class="settings-results-link">Settings</a>
+    </div>      
+        <div class="sub-search-button-wrapper">
+            {% if type == "text" %}
+            <div class="category-box">
+                <button id="sub-search-wrapper-ico" class="clickable search-active" name="t" value="text">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-search-header" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                        <path d="M10 10m-7 0a7 7 0 1 0 14 0a7 7 0 1 0 -14 0"></path>
+                        <path d="M21 21l-6 -6"></path>
+                    </svg>
+                </button>
+                <button name="t" value="text" class="clickable search-active">Web</button>
+            </div>                  
+            {% else %}
+            <div class="category-box">
+                <button id="sub-search-wrapper-ico" class="clickable" name="t" value="text">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-search-header" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                        <path d="M10 10m-7 0a7 7 0 1 0 14 0a7 7 0 1 0 -14 0"></path>
+                        <path d="M21 21l-6 -6"></path>
+                    </svg>
+                </button>
+                <button name="t" value="text" class="clickable">Web</button>
+            </div>      
+            {% endif %}
+            {% if type == "image" %}
+            <div class="category-box">
+                <button id="sub-search-wrapper-ico" class="clickable search-active" name="t" value="image">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-search-header" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                        <path d="M15 8h.01"></path>
+                        <path d="M3 6a3 3 0 0 1 3 -3h12a3 3 0 0 1 3 3v12a3 3 0 0 1 -3 3h-12a3 3 0 0 1 -3 -3v-12z"></path>
+                        <path d="M3 16l5 -5c.928 -.893 2.072 -.893 3 0l5 5"></path>
+                        <path d="M14 14l1 -1c.928 -.893 2.072 -.893 3 0l3 3"></path>
+                    </svg>
+                </button>
+                <button name="t" value="image" class="clickable search-active">Images</button>
+            </div>
+            {% else %}
+            <div class="category-box">
+                <button id="sub-search-wrapper-ico" class="clickable" name="t" value="image">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-search-header" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                        <path d="M15 8h.01"></path>
+                        <path d="M3 6a3 3 0 0 1 3 -3h12a3 3 0 0 1 3 3v12a3 3 0 0 1 -3 3h-12a3 3 0 0 1 -3 -3v-12z"></path>
+                        <path d="M3 16l5 -5c.928 -.893 2.072 -.893 3 0l5 5"></path>
+                        <path d="M14 14l1 -1c.928 -.893 2.072 -.893 3 0l3 3"></path>
+                    </svg>
+                </button>
+                <button name="t" value="image" class="clickable">Images</button>
+            </div>
+            {% endif %}
+            {% if type == "reddit" %}
+            <div class="category-box">
+                <button id="sub-search-wrapper-ico" class="clickable search-active" name="t" value="reddit">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-search-header" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                        <path d="M12 8c2.648 0 5.028 .826 6.675 2.14a2.5 2.5 0 0 1 2.326 4.36c0 3.59 -4.03 6.5 -9 6.5c-4.875 0 -8.845 -2.8 -9 -6.294l-1 -.206a2.5 2.5 0 0 1 2.326 -4.36c1.646 -1.313 4.026 -2.14 6.674 -2.14z"></path>
+                        <path d="M12 8l1 -5l6 1"></path>
+                        <path d="M19 4m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"></path>
+                        <circle cx="9" cy="13" r=".5" fill="currentColor"></circle>
+                        <circle cx="15" cy="13" r=".5" fill="currentColor"></circle>
+                        <path d="M10 17c.667 .333 1.333 .5 2 .5s1.333 -.167 2 -.5"></path>
+                    </svg>
+                </button>
+                <button name="t" value="reddit" class="clickable search-active">Reddit</button>
+            </div>
+            {% else %}
+            <div class="category-box">
+                <button id="sub-search-wrapper-ico" class="clickable" name="t" value="reddit">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-search-header" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                        <path d="M12 8c2.648 0 5.028 .826 6.675 2.14a2.5 2.5 0 0 1 2.326 4.36c0 3.59 -4.03 6.5 -9 6.5c-4.875 0 -8.845 -2.8 -9 -6.294l-1 -.206a2.5 2.5 0 0 1 2.326 -4.36c1.646 -1.313 4.026 -2.14 6.674 -2.14z"></path>
+                        <path d="M12 8l1 -5l6 1"></path>
+                        <path d="M19 4m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"></path>
+                        <circle cx="9" cy="13" r=".5" fill="currentColor"></circle>
+                        <circle cx="15" cy="13" r=".5" fill="currentColor"></circle>
+                        <path d="M10 17c.667 .333 1.333 .5 2 .5s1.333 -.167 2 -.5"></path>
+                    </svg>
+                </button>
+                <button name="t" value="reddit" class="clickable">Reddit</button>
+            </div>
+            {% endif %}
+        </div>
+        </div>
+        <!-- 'defer' makes script execute only after the whole DOM is parsed. -->
+        {% if javascript == "enabled" %}
+        <div id="kno_title" data-kno-title="{{ kno_title }}"></div>
+        <script defer src="/script.js"></script>
+        {% endif %}
+    </form>
+    {% block body %}{% endblock %}
+    <div class="footer">
+        <a href="/">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-bottom" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                <path d="M5 12l-2 0l9 -9l9 9l-2 0"></path>
+                <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7"></path>
+                <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6"></path>
+            </svg>
+            Home
+        </a>
+        <a href="/settings">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-bottom" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                <path d="M10.325 4.317c.426 -1.756 2.924 -1.756 3.35 0a1.724 1.724 0 0 0 2.573 1.066c1.543 -.94 3.31 .826 2.37 2.37a1.724 1.724 0 0 0 1.065 2.572c1.756 .426 1.756 2.924 0 3.35a1.724 1.724 0 0 0 -1.066 2.573c.94 1.543 -.826 3.31 -2.37 2.37a1.724 1.724 0 0 0 -2.572 1.065c-.426 1.756 -2.924 1.756 -3.35 0a1.724 1.724 0 0 0 -2.573 -1.066c-1.543 .94 -3.31 -.826 -2.37 -2.37a1.724 1.724 0 0 0 -1.065 -2.572c-1.756 -.426 -1.756 -2.924 0 -3.35a1.724 1.724 0 0 0 1.066 -2.573c-.94 -1.543 .826 -3.31 2.37 -2.37c1 .608 2.296 .07 2.572 -1.065z"></path>
+                <path d="M9 12a3 3 0 1 0 6 0a3 3 0 0 0 -6 0"></path>
+            </svg>
+            Settings
+        </a>
+        <a target="_blank" href="{{ repo_url }}">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-bottom" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                <path d="M7 8l-4 4l4 4"></path>
+                <path d="M17 8l4 4l-4 4"></path>
+                <path d="M14 4l-4 16"></path>
+            </svg>
+            Source code
+        </a>
+        <a target="_blank" class="mobile-none" href="{{ repo_url }}/commit/{{ commit }}">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-bottom" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                <path d="M7 18m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0"></path>
+                <path d="M7 6m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0"></path>
+                <path d="M17 6m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0"></path>
+                <path d="M7 8l0 8"></path>
+                <path d="M9 18h6a2 2 0 0 0 2 -2v-5"></path>
+                <path d="M14 14l3 -3l3 3"></path>
+            </svg>
+            Commit: {{ commit }}
+        </a>
+    </div>
+</body>
+
+</html>

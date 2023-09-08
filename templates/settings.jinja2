@@ -1,0 +1,22 @@
+{% extends "preresults_layout.jinja2" %}
+
+{% block body %}
+    <div class="settings-nav"><h1 class="logomobile"><a class="no-decoration" href="./">Tails<span class="X">X</span></a></h1></div>
+    <form action="/save-settings" method="post">
+    <input type="hidden" name="past" value="{{ current_url }}"></input>
+    <div class="settings">
+        <form>
+        <p>Change the look of TailsX</p>
+        <select id="theme" name="theme">
+            <option value="light" {% if theme == 'light' %}selected{% endif %}>Light</option>
+            <option value="dark_blur" {% if theme == 'dark_blur' %}selected{% endif %}>Dark</option>
+        </select>
+        <button class="save save-settings-page" type="submit">Save your settings</button>
+        <p>Open links in a new tab</p>
+        <select id="open-new-tab" name="new_tab">
+            <option value="" {% if new_tab == '' %}selected{% endif %}>New Tab Off</option>
+            <option value="active" {% if new_tab == 'active' %}selected{% endif %}>New Tab On</option>
+        </select>
+        </form>
+    </div>
+{% endblock %}

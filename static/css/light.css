@@ -1,0 +1,35 @@
+:root {
+    --html-bg: #ffffff;
+    --font-fg: #000000;
+    --fg: #202124;
+
+    --search-bg: #ffffffb2;
+    --search-bg-input: #f6f6f6;
+    --search-bg-input-border: #dadce0;
+    --search-select: #eeeeee;
+
+    --border: #dadce0;
+
+    --link: #1a0dab;
+    --link-visited: #681da8;
+
+    --snip-border: #dadce0;
+    --snip-background: #ffffff;
+    --snip-text: #000000;
+
+    --settings-border: #5f6368;
+    --button: #f6f6f6;
+
+    --footer-bg: #f6f6f6;
+    --footer-font: #353535;
+
+    --highlight: #202124;
+
+    --blue: #4285f4;
+    
+    --image-view: #ffffff;
+    --image-view-titlebar: #ffffff;
+    --view-image-color: #f1f3f4;
+
+    --search-button: #202124;
+}

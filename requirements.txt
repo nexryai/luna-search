@@ -1,0 +1,6 @@
+flask
+lxml
+bs4
+gunicorn
+requests
+libfrea
