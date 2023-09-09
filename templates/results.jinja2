@@ -96,17 +96,8 @@
     {% endif %}
 
     {% if results %}
-        <div class="result_sublink">
-            <a id="link" {% if new_tab == "active" %} target="_blank" {% endif %}
-               href="{{ results[0].url }}">{{ results[0].url }}</a>
-            <a {% if new_tab == "active" %} target="_blank" {% endif %} href="{{ results[0].url }}">
-                <h3>{{ results[0].title }}</h3></a>
-            <p>{{ results[0].content }}</p>
-        </div>
-    {% endif %}
-    {% if results %}
         <div class="clean">
-            {% for result in results[1:] %}
+            {% for result in results %}
                 <div class="results">
                     <a id="link" href="{{ result.url }}" {% if new_tab == "active" %}
                        target="_blank" {% endif %}>{{ result.url }}</a>

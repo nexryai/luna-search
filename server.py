@@ -17,6 +17,7 @@ from searx.search import initialize as search_initialize, SearchQuery, Search, E
 from searx.webapp import werkzeug_reloader
 
 from _config import *
+from luna.helpers import detect_lang
 from luna.services.emergency import EmergencyService
 from luna.services.weather import WeatherService
 from luna.services.search import SearchService
@@ -145,6 +146,9 @@ def search():
 
         accept_language = request.headers.get("Accept-Language", "")
         search_language = "en"
+
+        if detect_lang(query) == "ja":
+            search_language = "ja"
 
         if category == "image":
             use_engines = [EngineRef("duckduckgo images", "images"),
