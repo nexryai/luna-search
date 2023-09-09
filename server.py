@@ -17,11 +17,11 @@ from searx.search import initialize as search_initialize, SearchQuery, Search, E
 from searx.webapp import werkzeug_reloader
 
 from _config import *
-from bluemoon.services.emergency import EmergencyService
-from bluemoon.services.weather import WeatherService
-from bluemoon.services.search import SearchService
-from bluemoon import helpers
-from bluemoon import log
+from luna.services.emergency import EmergencyService
+from luna.services.weather import WeatherService
+from luna.services.search import SearchService
+from luna import helpers
+from luna import log
 
 app = Flask(__name__, static_folder="static", static_url_path="")
 app.jinja_env.filters['highlight_query_words'] = helpers.highlight_query_words
@@ -232,7 +232,7 @@ def search():
 
         if category == "image":
             return render_template("images.jinja2",
-                                   results=results, p=1, title=f"{query} - TailsX",
+                                   results=results, p=1, title=f"{query} - Luna Search",
                                    q=f"{original_query}",
                                    theme=request.cookies.get('theme', DEFAULT_THEME),
                                    new_tab=request.cookies.get("new_tab"),
@@ -242,7 +242,7 @@ def search():
                                    )
 
         return render_template("results.jinja2",
-                               results=results, p=1, title=f"{query} - TailsX",
+                               results=results, p=1, title=f"{query} - Luna Search",
                                q=f"{original_query}",
                                theme=request.cookies.get('theme', DEFAULT_THEME),
                                new_tab=request.cookies.get("new_tab"),
@@ -257,9 +257,9 @@ if __name__ == "__main__":
     from pyfiglet import Figlet
 
     aa = Figlet(font="thin")
-    welcome_aa = aa.renderText("Bluemoon")
+    welcome_aa = aa.renderText("Luna Search")
 
-    print(f"Booting Bluemoon Search Server ver.0.10 (codename: Night Ocean) on {socket.gethostname()}\033[34;1m")
+    print(f"Booting Luna Search Server ver.0.10 (codename: Night Ocean) on {socket.gethostname()}\033[34;1m")
     print(welcome_aa)
     print(
         "\033[90;1m(c) 2023 nexryai\nThis program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;",

@@ -1,6 +1,6 @@
 import libfrea
 
-from bluemoon.services.url import UrlService
+from luna.services.url import UrlService
 
 
 class SearchService:

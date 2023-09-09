@@ -7,7 +7,7 @@ import redis as pyredis
 import requests
 from urllib import request as request_html
 
-from bluemoon import log
+from luna import log
 
 
 class EmergencyService:
