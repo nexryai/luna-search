@@ -5,4 +5,7 @@ gunicorn
 requests
 libfrea
 pyfiglet
+pygeonlp==1.2.0
+feedparser==6.0.10
+lxml~=4.9.3
 git+https://github.com/searxng/searxng

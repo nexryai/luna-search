@@ -1,3 +1,4 @@
+import threading
 from html import escape
 import json
 import requests
@@ -16,7 +17,8 @@ from searx.search import initialize as search_initialize, SearchQuery, Search, E
 from searx.webapp import werkzeug_reloader
 
 from _config import *
-from bluemoon.services.searchService import SearchService
+from bluemoon.services.emergency import EmergencyService
+from bluemoon.services.search import SearchService
 from bluemoon import helpers
 from bluemoon import log
 
@@ -252,6 +254,13 @@ if __name__ == "__main__":
         "\033[90;1m(c) 2023 nexryai\nThis program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;",
         "without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.",
         "See the GNU Affero General Public License for more details.\n\n\033[0m")
+
+    daemon = EmergencyService()
+
+    log.info("Starting monitor daemon...")
+    daemon_thread = threading.Thread(target=daemon.start_monitor)
+    daemon_thread.daemon = True
+    daemon_thread.start()
 
     log.info("Starting server...")
     log.info(f"Listen on port {PORT}")
