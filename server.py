@@ -18,6 +18,7 @@ from searx.webapp import werkzeug_reloader
 
 from _config import *
 from bluemoon.services.emergency import EmergencyService
+from bluemoon.services.weather import WeatherService
 from bluemoon.services.search import SearchService
 from bluemoon import helpers
 from bluemoon import log
@@ -219,6 +220,16 @@ def search():
                 else:
                     result['publishedDate'] = webutils.searxng_l10n_timespan(result['publishedDate'])
 
+        emergency_info = EmergencyService()
+        infobar = emergency_info.get()
+
+        if "天気" in query:
+            weather_info = WeatherService()
+            infobar["weather"] = weather_info.get_from_query(query)
+        else:
+            infobar["weather"] = None
+
+
         if category == "image":
             return render_template("images.jinja2",
                                    results=results, p=1, title=f"{query} - TailsX",
@@ -237,7 +248,7 @@ def search():
                                new_tab=request.cookies.get("new_tab"),
                                javascript="enabled", DEFAULT_THEME=DEFAULT_THEME,
                                type=category, search_type="text", repo_url=REPO, lang="ja", safe=0, check="",
-                               snipp=snipp, infobox=infobox
+                               snipp=snipp, infobox=infobox, infobar=infobar
                                )
 
 

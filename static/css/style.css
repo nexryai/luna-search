@@ -958,11 +958,22 @@ p {
     color: var(--fg);
     margin-left: 170px;
     margin-top: 0px;
+    margin-bottom: 40px;
     position: relative;
     line-height: 1.58;
     font-size: 16px;
     float: none;
     max-width: 48em;
+}
+
+.snipp-warn {
+	border-bottom: 1px solid #c21500;
+	border-image: linear-gradient(to right, #c21500 0%, #ffcb00 100%);
+	border-image-slice: 1;
+}
+
+.snipp-warn-full {
+    width: 100%;
 }
 
 .snipp a {

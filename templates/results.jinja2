@@ -6,69 +6,143 @@
     <p class="fetched">{{ fetched }}</p>
     {% if check == "" %}
     {% else %}
-        <div class="check"><p>Did you mean: <a href="/search?q={{ check }}&t={{ search_type }}"><h3>{{ check }}</h3></a></p></div>
+        <div class="check">
+            <p>Did you mean: <a href="/search?q={{ check }}&t={{ search_type }}"><h3>{{ check }}</h3></a></p>
+        </div>
     {% endif %}
     {% if snipp != None %}
         <p id="info_font" class="snip">{{ snipp }}</p>
     {% endif %}
 
     {% if infobox != None %}
-    <div class="snip">
-        <h1 class="snip_title">{{ infobox.infobox }}</h1>
-        {% if infobox.img_src != None %}
-            <img src="https://proxy.sda1.net/proxy.img?url={{ infobox.img_src }}&avif=1"/>
-        {% endif %}
-        <p>{{ infobox.content }}</p>
-        {% for url in infobox.urls %}
-            <a target="_blank" href="{{ url.url }}">{{ url.title }}</a>
-        {% endfor %}
-    </div>
-    {% endif %}
-
-    {% if snipp != None %}
-        <p class="snipp">{{ snipp.answer }}</p>
-    {% endif %}
-
-    {% if results %}
-    <div class="result_sublink">
-      <a id="link" {% if new_tab == "active" %} target="_blank" {% endif %} href="{{ results[0].url }}">{{ results[0].url }}</a>
-        <a {% if new_tab == "active"  %} target="_blank" {% endif %} href="{{ results[0].url }}"><h3>{{ results[0].title }}</h3></a>
-        <p>{{ results[0].content }}</p>
-    </div>
-    {% endif %}
-    {% if results %}
-    <div class="clean">
-        {% for result in results[1:] %}
-        <div class="results">
-            <a id="link" href="{{ result.url }}" {% if new_tab == "active"  %} target="_blank" {% endif %}>{{ result.url }}</a>
-            <a href="{{ result.url }}" {% if new_tab == "active"  %} target="_blank" {% endif %}><h3>{{ result.title }}</h3></a>
-            <p>{{ result.content }}</p>
+        <div class="snip">
+            <h1 class="snip_title">{{ infobox.infobox }}</h1>
+            {% if infobox.img_src != None %}
+                <img src="https://proxy.sda1.net/proxy.img?url={{ infobox.img_src }}&avif=1"/>
+            {% endif %}
+            <p>{{ infobox.content }}</p>
+            {% for url in infobox.urls %}
+                <a target="_blank" href="{{ url.url }}">{{ url.title }}</a>
+            {% endfor %}
         </div>
-        {% endfor %}
-    </div>
-    <div class="prev-next">
-        <form>
-          <input type="hidden" name="q" value="{{ q }}">
-          <input type="hidden" name="t" value="{{ type }}">
-          {% set p = request.args.get('p', 0)|int %}
-          {% if p >= 10 %}
-              <button name="p" value="{{ p - 10 }}">
-                  <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-search-nav" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                      <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                      <path d="M15 6l-6 6l6 6"></path>
-                  </svg>
-                  Previous
-              </button>
-          {% endif %}
-          <button name="p" value="{{ p + 10 }}">
-              Next
-              <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-search-nav" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                  <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                  <path d="M9 6l6 6l-6 6"></path>
-              </svg>
-          </button>
-        </form>
-    </div>
+    {% endif %}
+
+    {% if infobar != None %}
+        {% if infobar["tsunami"]["alert"] == True %}
+            <div class="snipp snipp-warn {% if infobox == None %}snipp-warn-full{% endif %}">
+                <h2>
+                    <svg xmlns="http://www.w3.org/2000/svg" style="vertical-align: -3px;"
+                         class="icon icon-tabler icon-tabler-alert-circle" width="24"
+                         height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
+                         stroke-linecap="round" stroke-linejoin="round">
+                        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                        <path d="M3 12a9 9 0 1 0 18 0a9 9 0 0 0 -18 0"></path>
+                        <path d="M12 8v4"></path>
+                        <path d="M12 16h.01"></path>
+                    </svg>
+                    津波情報
+                </h2>
+                <p {% if infobox == None %}style="max-width: 999em" {% endif %}>現在、一部沿岸地域に{{ infobar["tsunami"]["grade"] }}が発表されています。</p>
+            </div>
+        {% endif %}
+
+        {% if infobar["jalert"]["alert"] == True %}
+            <div class="snipp snipp-warn {% if infobox == None %}snipp-warn-full{% endif %}">
+                <h2>
+                    <svg xmlns="http://www.w3.org/2000/svg" style="vertical-align: -3px;"
+                         class="icon icon-tabler icon-tabler-alert-circle" width="24"
+                         height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
+                         stroke-linecap="round" stroke-linejoin="round">
+                        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                        <path d="M3 12a9 9 0 1 0 18 0a9 9 0 0 0 -18 0"></path>
+                        <path d="M12 8v4"></path>
+                        <path d="M12 16h.01"></path>
+                    </svg>
+                    国民保護に関する情報
+                </h2>
+                <p {% if infobox == None %}style="max-width: 999em" {% endif %}>{{ infobar["jalert"]["text"] }}</p>
+            </div>
+        {% endif %}
+
+        {% if infobar["weather"] != None %}
+            <div class="snipp" style="height: 110px;">
+                <div style="float: left;">
+                    <img width="auto" height="90px" src="/img/weathericon/{{ infobar["weather"]["weather"] }}.svg">
+                </div>
+                <div style="float: left;padding-left: 10px;"><h2><br>{{ infobar["weather"]["temp_now"] }}℃</h2></div>
+                <div style="float: right;">
+                    <table>
+                        <tr>
+                            <th><p>{{ infobar["weather"]["d2_disp"] }}</p></th>
+                            <th><img width="auto" height="40px" style="vertical-align: middle;"
+                                     src="/img/weathericon/{{ infobar["weather"]["weather_d2"] }}.svg"></th>
+                            <th><p>{{ infobar["weather"]["maxtemp_d2"] }}℃</p></th>
+                        </tr>
+                        <tr>
+                            <th><p>{{ infobar["weather"]["d3_disp"] }}</p></th>
+                            <th><img width="auto" height="40px" style="vertical-align: middle;"
+                                     src="/img/weathericon/{{ infobar["weather"]["weather_d3"] }}.svg"></th>
+                            <th><p>{{ infobar["weather"]["maxtemp_d3"] }}℃</p></th>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        {% endif %}
+
+    {% else %}
+        {% if snipp != None %}
+            <p class="snipp">{{ snipp.answer }}</p>
+        {% endif %}
+    {% endif %}
+
+    {% if results %}
+        <div class="result_sublink">
+            <a id="link" {% if new_tab == "active" %} target="_blank" {% endif %}
+               href="{{ results[0].url }}">{{ results[0].url }}</a>
+            <a {% if new_tab == "active" %} target="_blank" {% endif %} href="{{ results[0].url }}">
+                <h3>{{ results[0].title }}</h3></a>
+            <p>{{ results[0].content }}</p>
+        </div>
+    {% endif %}
+    {% if results %}
+        <div class="clean">
+            {% for result in results[1:] %}
+                <div class="results">
+                    <a id="link" href="{{ result.url }}" {% if new_tab == "active" %}
+                       target="_blank" {% endif %}>{{ result.url }}</a>
+                    <a href="{{ result.url }}" {% if new_tab == "active" %} target="_blank" {% endif %}>
+                        <h3>{{ result.title }}</h3></a>
+                    <p>{{ result.content }}</p>
+                </div>
+            {% endfor %}
+        </div>
+        <div class="prev-next">
+            <form>
+                <input type="hidden" name="q" value="{{ q }}">
+                <input type="hidden" name="t" value="{{ type }}">
+                {% set p = request.args.get('p', 0)|int %}
+                {% if p >= 10 %}
+                    <button name="p" value="{{ p - 10 }}">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-search-nav" width="24"
+                             height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
+                             stroke-linecap="round" stroke-linejoin="round">
+                            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                            <path d="M15 6l-6 6l6 6"></path>
+                        </svg>
+                        Previous
+                    </button>
+                {% endif %}
+                <button name="p" value="{{ p + 10 }}">
+                    Next
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-search-nav" width="24"
+                         height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
+                         stroke-linecap="round" stroke-linejoin="round">
+                        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                        <path d="M9 6l6 6l-6 6"></path>
+                    </svg>
+                </button>
+            </form>
+        </div>
     {% else %}
         <div class="no-results-found">
             Your search '{{ q }}' came back with no results.<br>
