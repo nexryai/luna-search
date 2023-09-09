@@ -4,4 +4,5 @@ bs4
 gunicorn
 requests
 libfrea
+pyfiglet
 git+https://github.com/searxng/searxng

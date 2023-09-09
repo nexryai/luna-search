@@ -1,6 +1,5 @@
 from html import escape
 import json
-import os
 import requests
 import random
 
@@ -17,9 +16,9 @@ from searx.search import initialize as search_initialize, SearchQuery, Search, E
 from searx.webapp import werkzeug_reloader
 
 from _config import *
-from src.services.searchService import SearchService
-from src import helpers
-
+from bluemoon.services.searchService import SearchService
+from bluemoon import helpers
+from bluemoon import log
 
 app = Flask(__name__, static_folder="static", static_url_path="")
 app.jinja_env.filters['highlight_query_words'] = helpers.highlight_query_words
@@ -157,9 +156,9 @@ def search():
 
         elif "ja" in accept_language:
             # Accept-LanguageヘッダーにjaがあるならGooエンジンを有効にする
-            # 区切り文字が2個以下なら日本語の結果のみ表示する
-            if query.count(" ") <= 2:
-                search_language = "ja"
+            # 区切り文字が2個以下なら日本語の結果のみ表示する ←特定条件で精度が下がるのでやめる
+            # if query.count(" ") <= 2:
+            #    search_language = "ja"
 
             use_engines = [EngineRef("google", "general"),
                            EngineRef("goo", "general"),
@@ -240,8 +239,21 @@ def search():
                                )
 
 
-if not werkzeug_reloader or (werkzeug_reloader and os.environ.get("WERKZEUG_RUN_MAIN") == "true"):
-    search_initialize(enable_checker=True, check_network=True)
-
 if __name__ == "__main__":
+    import socket
+    from pyfiglet import Figlet
+
+    aa = Figlet(font="thin")
+    welcome_aa = aa.renderText("Bluemoon")
+
+    print(f"Booting Bluemoon Search Server ver.0.10 (codename: Night Ocean) on {socket.gethostname()}\033[34;1m")
+    print(welcome_aa)
+    print(
+        "\033[90;1m(c) 2023 nexryai\nThis program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;",
+        "without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.",
+        "See the GNU Affero General Public License for more details.\n\n\033[0m")
+
+    log.info("Starting server...")
+    log.info(f"Listen on port {PORT}")
+
     app.run(threaded=True, port=PORT)

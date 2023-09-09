@@ -1973,6 +1973,7 @@ engines:
     categories: [general, web]
     disabled: true
     timeout: 4.0
+    weight: 4
     about:
       website: https://search.goo.ne.jp
       wikidata_id: Q249044

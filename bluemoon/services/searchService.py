@@ -1,10 +1,6 @@
-from src.helpers import makeHTMLRequest, latest_commit
-from urllib.parse import unquote, urlparse
-from _config import *
-from flask import request, jsonify
 import libfrea
 
-from src.services.urlService import UrlService
+from bluemoon.services.urlService import UrlService
 
 
 class SearchService:
