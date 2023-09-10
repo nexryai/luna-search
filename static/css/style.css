@@ -946,6 +946,12 @@ p {
     white-space: nowrap;
 }
 
+.snip-url-icon {
+	vertical-align: -3.4px;
+	height: 20px;
+	width: auto;
+}
+
 .snip a:hover {
     text-decoration: underline;
 }

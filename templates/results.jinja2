@@ -22,7 +22,33 @@
             {% endif %}
             <p>{{ infobox.content }}</p>
             {% for url in infobox.urls %}
-                <a target="_blank" href="{{ url.url }}">{{ url.title }}</a>
+                <a target="_blank" href="{{ url.url }}">
+                    {% if url.title == "Wikipedia" %}
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-wikipedia snip-url-icon"
+                             width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
+                             fill="none" stroke-linecap="round" stroke-linejoin="round">
+                            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                            <path d="M3 4.984h2"></path>
+                            <path d="M8 4.984h2.5"></path>
+                            <path d="M14.5 4.984h2.5"></path>
+                            <path d="M22 4.984h-2"></path>
+                            <path d="M4 4.984l5.455 14.516l6.545 -14.516"></path>
+                            <path d="M9 4.984l6 14.516l6 -14.516"></path>
+                        </svg>
+                    {% else %}
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-link snip-url-icon" width="24"
+                             height="24"
+                             viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
+                             stroke-linecap="round"
+                             stroke-linejoin="round">
+                            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                            <path d="M9 15l6 -6"></path>
+                            <path d="M11 6l.463 -.536a5 5 0 0 1 7.071 7.072l-.534 .464"></path>
+                            <path d="M13 18l-.397 .534a5.068 5.068 0 0 1 -7.127 0a4.972 4.972 0 0 1 0 -7.071l.524 -.463"></path>
+                        </svg>
+                    {% endif %}
+                    {{ url.title }}
+                </a>
             {% endfor %}
         </div>
     {% endif %}
@@ -42,7 +68,8 @@
                     </svg>
                     津波情報
                 </h2>
-                <p {% if infobox == None %}style="max-width: 999em" {% endif %}>現在、一部沿岸地域に{{ infobar["tsunami"]["grade"] }}が発表されています。</p>
+                <p {% if infobox == None %}style="max-width: 999em" {% endif %}>
+                    現在、一部沿岸地域に{{ infobar["tsunami"]["grade"] }}が発表されています。</p>
             </div>
         {% endif %}
 
