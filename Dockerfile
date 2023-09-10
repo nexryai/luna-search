@@ -5,7 +5,7 @@ WORKDIR /app
 COPY requirements.txt /app/
 
 RUN apt update && apt upgrade -y \
- && apt install git python3 python3-venv python3-pip libmecab2 libboost-regex1.74.0 libboost-system1.74.0 mecab mecab-ipadic sqlite3 python3-dev libboost-dev libboost1.74-all-dev libboost-regex1.74-dev libmecab-dev libsqlite3-dev build-essential -y \
+ && apt install git python3 python3-venv python3-pip libmecab2 libboost-regex1.74.0 libboost-system1.74.0 libboost-filesystem1.74.0 mecab mecab-ipadic sqlite3 python3-dev libboost-dev libboost1.74-all-dev libboost-regex1.74-dev libmecab-dev libsqlite3-dev build-essential -y \
  && pip install --break-system-packages -r requirements.txt \
  && pip install --break-system-packages git+https://github.com/searxng/searxng \
  && groupadd app \
