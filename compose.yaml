@@ -1,5 +1,8 @@
+version: "3.2"
 services:
-  tailsx:
-    build: .
-    ports:
-      - "8000:8000"
+  luna:
+    image: docker.io/nexryai/luna:latest
+    network_mode: host
+    environment:
+     - REDIS_HOST=127.0.0.1
+     - REDIS_PORT=6379

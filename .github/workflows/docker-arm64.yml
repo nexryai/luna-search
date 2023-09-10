@@ -21,4 +21,4 @@ jobs:
           context: .
           platforms: linux/arm64
           push: true
-          tags: nexryai/luna:latest
+          tags: nexryai/luna:main-arm64
