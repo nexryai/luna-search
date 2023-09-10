@@ -5,7 +5,7 @@ WORKDIR /app
 COPY requirements.txt /app/
 
 RUN apt update && apt upgrade -y \
- && apt install python3 python3-venv python3-pip libboost-all-dev mecab mecab-ipadic sqlite python3-dev libboost-dev libmecab-dev libsqlite3-dev build-essential -y \
+ && apt install python3 python3-venv python3-pip libboost-all-dev mecab mecab-ipadic sqlite3 python3-dev libboost-dev libmecab-dev libsqlite3-dev build-essential -y \
  && pip install -r requirements.txt \
  && apt purge python3-dev libboost-dev libmecab-dev libsqlite3-dev build-essential -y && apt -y autoremove --purge \
  && groupadd app \
