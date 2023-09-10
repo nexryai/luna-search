@@ -26,6 +26,7 @@ jobs:
           python -m pip install --upgrade pip
           pip install --break-system-packages pytest
           pip install --break-system-packages -r requirements.txt
+          pip install --break-system-packages git+https://github.com/searxng/searxng
           python3 -m pygeonlp.api setup /usr/pygeonlp_basedata
       - name: Run test
         run: |
