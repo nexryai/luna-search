@@ -98,31 +98,6 @@ def wikipedia():
     return json.loads(response.text)
 
 
-@app.route("/img_proxy")
-def img_proxy():
-    # Get the URL of the image to proxy
-    url = request.args.get("url", "").strip()
-
-    # Only allow proxying image from startpage.com, upload.wikimedia.org and imgs.search.brave.com
-    if not (url.startswith("https://s1.qwant.com/") or url.startswith("https://s2.qwant.com/") or url.startswith("https://upload.wikimedia.org/wikipedia/commons/") or url.startswith("https://yt.revvy.de")):
-        return Response("Error: invalid URL", status=400)
-
-    # Choose one user agent at random
-    user_agent = random.choice(user_agents)
-    headers = {"User-Agent": user_agent}
-
-    # Fetch the image data from the specified URL
-    response = requests.get(url, headers=headers)
-
-    # Check that the request was successful
-    if response.status_code == 200:
-        # Create a Flask response with the image data and the appropriate Content-Type header
-        return Response(response.content, mimetype=response.headers["Content-Type"])
-    else:
-        # Return an error response if the request failed
-        return Response("Error fetching image", status=500)
-
-
 @app.route("/", methods=["GET", "POST"])
 @app.route("/search", methods=["GET", "POST"])
 def search():

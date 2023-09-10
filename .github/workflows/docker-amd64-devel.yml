@@ -3,7 +3,7 @@ on:
   workflow_dispatch:
   push:
     branches:
-      - "main"
+      - "devel"
 jobs:
   build-image:
     name: Build Docker image and push to Docker Hub
@@ -21,4 +21,4 @@ jobs:
           context: .
           platforms: linux/amd64
           push: true
-          tags: nexryai/luna:latest
+          tags: nexryai/luna:devel

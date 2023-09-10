@@ -1,9 +1,9 @@
-name: Build container image (amd64)
+name: Build container image (arm64)
 on:
   workflow_dispatch:
   push:
     branches:
-      - "main"
+      - "devel"
 jobs:
   build-image:
     name: Build Docker image and push to Docker Hub
@@ -19,6 +19,6 @@ jobs:
       - uses: docker/build-push-action@v2
         with:
           context: .
-          platforms: linux/amd64
+          platforms: linux/arm64
           push: true
-          tags: nexryai/luna:latest
+          tags: nexryai/luna:devel-arm64
