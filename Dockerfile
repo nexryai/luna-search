@@ -12,7 +12,7 @@ RUN apt update && apt upgrade -y \
  && useradd -d /app -s /bin/sh -g app app \
  && chown -R app:app /app \
  && su app -c "python3 -m pygeonlp.api setup /usr/pygeonlp_basedata" \
- && apt purge git python3-dev libboost-dev libboost-all-dev libmecab-dev libsqlite3-dev build-essential -y && apt -y autoremove --purge \
+ && apt purge git python3-dev libboost-dev libmecab-dev libsqlite3-dev build-essential -y && apt -y autoremove --purge \
  && apt clean
 
 COPY . .
