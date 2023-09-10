@@ -126,6 +126,7 @@ def img_proxy():
 @app.route("/", methods=["GET", "POST"])
 @app.route("/search", methods=["GET", "POST"])
 def search():
+    log.dbg("Request Handled")
     if request.method == "GET":
         # get the `q` query parameter from the URL
         query = request.args.get("q", "").strip()
@@ -207,7 +208,7 @@ def search():
         smartcard_thread.join()
         smart_card = smartcard_thread.get_result()
 
-        log.dbg("Result OK!!!")
+        log.dbg(f"{query}: Result OK!!!")
 
         return render_template("results.jinja2",
                                results=r["results"], p=1, title=f"{query} - Luna Search",
