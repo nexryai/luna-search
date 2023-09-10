@@ -34,7 +34,8 @@ class SmartcardService:
             description = "No description was found."
 
         result = {"label": label,
-                  "description": description}
+                  "description": description,
+                  "official_website": None}
 
         try:
             counts = 0

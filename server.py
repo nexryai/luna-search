@@ -148,7 +148,8 @@ def search():
         accept_language = request.headers.get("Accept-Language", "")
         search_language = "en"
 
-        if detect_lang(query) == "ja":
+        # ひらがなかカタカナがないと中国語と判定されるのでとりあえず雑実装
+        if detect_lang(query) == "ja" or detect_lang(query) == "zh":
             search_language = "ja"
 
         # 非同期でスマートカードの情報取得処理
