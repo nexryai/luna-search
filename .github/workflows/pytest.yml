@@ -19,10 +19,10 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt-get install python3 python3-dev python3-pip libmecab2 mecab mecab-ipadic sqlite3 libboost-dev libboost-all-dev libboost-regex-dev libmecab-dev libsqlite3-dev build-essential -y
-          python3 -m pip install --upgrade pip
-          python3 -m　pip install --break-system-packages pytest
-          python3 -m　pip install --break-system-packages -r requirements.txt
-          python3 -m　pip install --break-system-packages git+https://github.com/searxng/searxng
+          pip install --upgrade pip
+          pip install --break-system-packages pytest
+          pip install --break-system-packages -r requirements.txt
+          pip install --break-system-packages git+https://github.com/searxng/searxng
           python3 -m pygeonlp.api setup /usr/pygeonlp_basedata
       - name: Run test
         run: |
