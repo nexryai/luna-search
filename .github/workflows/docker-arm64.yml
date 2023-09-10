@@ -1,4 +1,4 @@
-name: Build container image
+name: Build container image (arm64)
 on:
   workflow_dispatch:
   push:
@@ -6,7 +6,7 @@ on:
       - "main"
 jobs:
   build-image:
-    name: Build arm64 Docker image and push to Docker Hub
+    name: Build Docker image and push to Docker Hub
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
