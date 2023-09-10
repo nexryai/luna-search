@@ -1,6 +1,14 @@
 import time
 
-from luna.services.smartcard import get_wikidata_id_from_query
+from luna.services.smartcard import get_wikidata_id_from_query, SmartcardService
+
+
+def test_smartcard():
+    processor = SmartcardService("Q108896777")
+    result = processor.get_info("ja")
+    assert type(result["label"]) == str
+    assert type(result["description"]) == str
+    assert type(result["official_website"]) == str
 
 
 def test_get_wikidata_id_from_query():
