@@ -1,30 +1,20 @@
-FROM ubuntu:latest
+FROM debian:bookworm-slim
 
 WORKDIR /app
 
 COPY requirements.txt /app/
 
-RUN apt update && apt upgrade -y
-RUN apt install python3 python3-venv python3-pip -y
-
-RUN python3 -m venv venv
-RUN . venv/bin/activate
-RUN pip install -r requirements.txt
+RUN apt update && apt upgrade -y \
+ && apt install python3 python3-venv python3-pip libboost-all-dev mecab mecab-ipadic sqlite python3-dev libboost-dev libmecab-dev libsqlite3-dev build-essential -y \
+ && pip install -r requirements.txt \
+ && apt purge python3-dev libboost-dev libmecab-dev libsqlite3-dev build-essential -y && apt -y autoremove --purge \
+ && groupadd app \
+ && useradd -d /app -s /bin/sh -g app app \
+ && chown -R app:app /app \
+ && su app -c "python3 -m pygeonlp.api setup /usr/pygeonlp_basedata" \
+ && apt clean
 
 COPY . .
 
-# Be sure do set this to the domain you will be using!
-# opensearch.xml WILL be generated using this domain.
-# Uncomment when done.
-# NOTE: You do not need to add a trailing '/'.
-# NOTE: Use the example below as a reference on using the variable.
-# ENV DOMAIN=https://www.yourdomain.com
-
-RUN sh scripts/generate-opensearch.sh
-
-ENV PORT=8000
-EXPOSE ${PORT}
-
-# Read the gunicorn docs on how exactly to use it,
-# or change the server if need be.
+USER app
 CMD [ "gunicorn", "--workers", "4", "--threads", "1", "server:app" ]
