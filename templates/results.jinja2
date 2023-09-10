@@ -15,47 +15,52 @@
     {% endif %}
 
     {% if infobox != None %}
-        <div class="snip">
-            <h1 class="snip_title">{{ infobox.infobox }}</h1>
-            {% if infobox.img_src != None %}
-                <img src="https://proxy.sda1.net/proxy.img?url={{ infobox.img_src }}&avif=1"/>
-            {% endif %}
-            <p>{{ infobox.content }}</p>
-            {% for url in infobox.urls %}
-                <a target="_blank" href="{{ url.url }}">
-                    {% if url.title == "Wikipedia" %}
-                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-wikipedia snip-url-icon"
-                             width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
-                             fill="none" stroke-linecap="round" stroke-linejoin="round">
-                            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                            <path d="M3 4.984h2"></path>
-                            <path d="M8 4.984h2.5"></path>
-                            <path d="M14.5 4.984h2.5"></path>
-                            <path d="M22 4.984h-2"></path>
-                            <path d="M4 4.984l5.455 14.516l6.545 -14.516"></path>
-                            <path d="M9 4.984l6 14.516l6 -14.516"></path>
-                        </svg>
-                    {% else %}
-                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-link snip-url-icon" width="24"
-                             height="24"
-                             viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
-                             stroke-linecap="round"
-                             stroke-linejoin="round">
-                            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                            <path d="M9 15l6 -6"></path>
-                            <path d="M11 6l.463 -.536a5 5 0 0 1 7.071 7.072l-.534 .464"></path>
-                            <path d="M13 18l-.397 .534a5.068 5.068 0 0 1 -7.127 0a4.972 4.972 0 0 1 0 -7.071l.524 -.463"></path>
-                        </svg>
-                    {% endif %}
-                    {{ url.title }}
-                </a>
-            {% endfor %}
-        </div>
+        {% if smart_card == None %}
+            <div class="snip">
+                <h1 class="snip_title">{{ infobox.infobox }}</h1>
+                {% if infobox.img_src != None %}
+                    <img src="https://proxy.sda1.net/proxy.img?url={{ infobox.img_src }}&avif=1"/>
+                {% endif %}
+                <p>{{ infobox.content }}</p>
+                {% for url in infobox.urls %}
+                    <a target="_blank" href="{{ url.url }}">
+                        {% if url.title == "Wikipedia" %}
+                            <svg xmlns="http://www.w3.org/2000/svg"
+                                 class="icon icon-tabler icon-tabler-brand-wikipedia snip-url-icon"
+                                 width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
+                                 fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                <path d="M3 4.984h2"></path>
+                                <path d="M8 4.984h2.5"></path>
+                                <path d="M14.5 4.984h2.5"></path>
+                                <path d="M22 4.984h-2"></path>
+                                <path d="M4 4.984l5.455 14.516l6.545 -14.516"></path>
+                                <path d="M9 4.984l6 14.516l6 -14.516"></path>
+                            </svg>
+                        {% else %}
+                            <svg xmlns="http://www.w3.org/2000/svg"
+                                 class="icon icon-tabler icon-tabler-link snip-url-icon"
+                                 width="24"
+                                 height="24"
+                                 viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
+                                 stroke-linecap="round"
+                                 stroke-linejoin="round">
+                                <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                <path d="M9 15l6 -6"></path>
+                                <path d="M11 6l.463 -.536a5 5 0 0 1 7.071 7.072l-.534 .464"></path>
+                                <path d="M13 18l-.397 .534a5.068 5.068 0 0 1 -7.127 0a4.972 4.972 0 0 1 0 -7.071l.524 -.463"></path>
+                            </svg>
+                        {% endif %}
+                        {{ url.title }}
+                    </a>
+                {% endfor %}
+            </div>
+        {% endif %}
     {% endif %}
 
     {% if infobar != None %}
         {% if infobar["tsunami"]["alert"] == True %}
-            <div class="snipp snipp-warn {% if infobox == None %}snipp-warn-full{% endif %}">
+            <div class="snipp snipp-warn {% if infobox == None %}snipp-full{% endif %}">
                 <h2>
                     <svg xmlns="http://www.w3.org/2000/svg" style="vertical-align: -3px;"
                          class="icon icon-tabler icon-tabler-alert-circle" width="24"
@@ -88,6 +93,83 @@
                     国民保護に関する情報
                 </h2>
                 <p {% if infobox == None %}style="max-width: 999em" {% endif %}>{{ infobar["jalert"]["text"] }}</p>
+            </div>
+        {% endif %}
+
+        {% if smart_card != None %}
+            {% if infobox != None %}
+                {% if infobox.img_src != None %}
+                    <style>
+                        .smartcard-background {
+                            position: relative;
+                            z-index: 0;
+                        }
+
+                        .smartcard-background:before {
+                            content: '';
+                            background-image: url('https://proxy.sda1.net/proxy.img?url={{ infobox.img_src }}&avif=1');
+                            background-size: cover;
+                            position: absolute;
+                            top: 0;
+                            left: 0;
+                            width: 100%;
+                            height: 100%;
+                            filter: blur(330px);
+                            z-index: -1;
+                        }
+                    </style>
+                {% endif %}
+            {% endif %}
+            <div class="snipp snipp-full smartcard-background">
+                <h2>{{ smart_card["label"] }}</h2>
+                <p>{{ smart_card["description"] }}</p>
+                {% if infobox != None %}
+                    <p style="max-width: 999em;">{{ infobox.content }}</p>
+                {% endif %}
+                <a href="{{ smart_card["official_website"] }}">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler smartcard-link-icons"
+                         width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
+                         stroke-linecap="round" stroke-linejoin="round">
+                        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                        <path d="M5 7.2a2.2 2.2 0 0 1 2.2 -2.2h1a2.2 2.2 0 0 0 1.55 -.64l.7 -.7a2.2 2.2 0 0 1 3.12 0l.7 .7c.412 .41 .97 .64 1.55 .64h1a2.2 2.2 0 0 1 2.2 2.2v1c0 .58 .23 1.138 .64 1.55l.7 .7a2.2 2.2 0 0 1 0 3.12l-.7 .7a2.2 2.2 0 0 0 -.64 1.55v1a2.2 2.2 0 0 1 -2.2 2.2h-1a2.2 2.2 0 0 0 -1.55 .64l-.7 .7a2.2 2.2 0 0 1 -3.12 0l-.7 -.7a2.2 2.2 0 0 0 -1.55 -.64h-1a2.2 2.2 0 0 1 -2.2 -2.2v-1a2.2 2.2 0 0 0 -.64 -1.55l-.7 -.7a2.2 2.2 0 0 1 0 -3.12l.7 -.7a2.2 2.2 0 0 0 .64 -1.55v-1"></path>
+                        <path d="M9 12l2 2l4 -4"></path>
+                    </svg>
+                    Official website
+                </a>
+                {% if infobox != None %}
+                    {% for url in infobox.urls %}
+                        <a target="_blank" href="{{ url.url }}">
+                            {% if url.title == "Wikipedia" %}
+                                <svg xmlns="http://www.w3.org/2000/svg"
+                                     class="icon icon-tabler icon-tabler-brand-wikipedia smartcard-link-icons"
+                                     width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
+                                     fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                    <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                    <path d="M3 4.984h2"></path>
+                                    <path d="M8 4.984h2.5"></path>
+                                    <path d="M14.5 4.984h2.5"></path>
+                                    <path d="M22 4.984h-2"></path>
+                                    <path d="M4 4.984l5.455 14.516l6.545 -14.516"></path>
+                                    <path d="M9 4.984l6 14.516l6 -14.516"></path>
+                                </svg>
+                            {% else %}
+                                <svg xmlns="http://www.w3.org/2000/svg"
+                                     class="icon icon-tabler icon-tabler-link smartcard-link-icons"
+                                     width="24"
+                                     height="24"
+                                     viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
+                                     stroke-linecap="round"
+                                     stroke-linejoin="round">
+                                    <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                    <path d="M9 15l6 -6"></path>
+                                    <path d="M11 6l.463 -.536a5 5 0 0 1 7.071 7.072l-.534 .464"></path>
+                                    <path d="M13 18l-.397 .534a5.068 5.068 0 0 1 -7.127 0a4.972 4.972 0 0 1 0 -7.071l.524 -.463"></path>
+                                </svg>
+                            {% endif %}
+                            {{ url.title }}
+                        </a>
+                    {% endfor %}
+                {% endif %}
             </div>
         {% endif %}
 

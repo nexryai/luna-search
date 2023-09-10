@@ -19,10 +19,12 @@ from searx.webapp import werkzeug_reloader
 from _config import *
 from luna.helpers import detect_lang
 from luna.services.emergency import EmergencyService
+from luna.services.smartcard import get_wikidata_id_from_query
 from luna.services.weather import WeatherService
 from luna.services.search import SearchService
 from luna import helpers
 from luna import log
+from luna.thread import LunaThread
 
 app = Flask(__name__, static_folder="static", static_url_path="")
 app.jinja_env.filters['highlight_query_words'] = helpers.highlight_query_words
@@ -128,6 +130,7 @@ def search():
         # get the `q` query parameter from the URL
         query = request.args.get("q", "").strip()
         category = request.args.get("t", "").strip()
+        pageno = request.args.get("p", "1").strip()
 
         # クエリがないならトップページ
         if query == "":
@@ -139,10 +142,7 @@ def search():
                                    javascript=request.cookies.get('javascript', 'enabled'), DEFAULT_THEME=DEFAULT_THEME,
                                    css_style=css_style, repo_url=REPO, commit=COMMIT)
 
-
-        # 全角スペースは置き換える
-        original_query = query.replace("　", " ")
-        query = original_query
+        query = query.replace("　", " ")
 
         accept_language = request.headers.get("Accept-Language", "")
         search_language = "en"
@@ -150,109 +150,73 @@ def search():
         if detect_lang(query) == "ja":
             search_language = "ja"
 
-        if category == "image":
-            use_engines = [EngineRef("duckduckgo images", "images"),
-                           EngineRef("brave", "images")]
+        # 非同期でスマートカードの情報取得処理
+        def smartcard_task(original_query: str, lang: str):
+            log.dbg("smartcard_task started on thread")
+            if original_query.count(" ") >= 2:
+                return None
 
-        elif category == "reddit":
-            query = f"site:reddit.com {original_query}"
-            use_engines = [EngineRef("google", "general"),
-                           EngineRef("duckduckgo", "general"),
-                           EngineRef("brave", "general"),
-                           EngineRef("qwant", "general")]
+            wikidata_id = get_wikidata_id_from_query(original_query)
 
-        elif "ja" in accept_language:
-            # Accept-LanguageヘッダーにjaがあるならGooエンジンを有効にする
-            # 区切り文字が2個以下なら日本語の結果のみ表示する ←特定条件で精度が下がるのでやめる
-            # if query.count(" ") <= 2:
-            #    search_language = "ja"
+            if wikidata_id is None:
+                return None
 
-            use_engines = [EngineRef("google", "general"),
-                           EngineRef("goo", "general"),
-                           EngineRef("duckduckgo", "general"),
-                           EngineRef("wikipedia", "general")]
-        else:
-            use_engines = [EngineRef("google", "general"),
-                           EngineRef("duckduckgo", "general"),
-                           EngineRef("wikipedia", "general")]
+            from luna.services.smartcard import SmartcardService
+            smart_card_processor = SmartcardService(wikidata_id)
+            return smart_card_processor.get_info(lang)
 
-        search_query = SearchQuery(
-            query=query,
-            lang=search_language,
-            safesearch=0,
-            pageno=1,
-            time_range="",
-            engineref_list=use_engines
-        )
+        smartcard_thread = LunaThread(target=smartcard_task, args=(query, search_language))
+        smartcard_thread.start()
 
-        search = Search(search_query)  # pylint: disable=redefined-outer-name
-        search_result = search.search()
+        def infobar_task(original_query: str, lang: str):
+            log.dbg("infobar_task started on thread")
+            emergency_info = EmergencyService()
+            infobar = emergency_info.get()
 
-        if request.args.get("debug", "").strip() == "true":
-            response = webutils.get_json_response(search_query, search_result)
-            return Response(response, mimetype='application/json')
+            if "天気" in query:
+                weather_info = WeatherService()
+                infobar["weather"] = weather_info.get_from_query(original_query)
+            else:
+                infobar["weather"] = None
 
-        try:
-            snipp = search_result.answers[0]
-        except:
-            snipp = None
+            return infobar
 
-        try:
-            infobox = search_result.infoboxes[0]
-        except:
-            infobox = None
+        infobar_thread = LunaThread(target=infobar_task, args=(query, search_language))
+        infobar_thread.start()
 
-        results = search_result.get_ordered_results()
-
-        # 結果の最適化
-        frea = SearchService()
-        results = frea.optimize(results)
-
-        for result in results:
-            if 'content' in result and result['content']:
-                result['content'] = escape(result['content'][:1024])
-            if 'title' in result and result['title']:
-                result['title'] = escape(result['title'] or '')
-
-            if 'url' in result:
-                result['pretty_url'] = webutils.prettify_url(result['url'])
-            if result.get('publishedDate'):  # do not try to get a date from an empty string or a None type
-                try:  # test if publishedDate >= 1900 (datetime module bug)
-                    result['pubdate'] = result['publishedDate'].strftime('%Y-%m-%d %H:%M:%S%z')
-                except ValueError:
-                    result['publishedDate'] = None
-                else:
-                    result['publishedDate'] = webutils.searxng_l10n_timespan(result['publishedDate'])
-
-        emergency_info = EmergencyService()
-        infobar = emergency_info.get()
-
-        if "天気" in query:
-            weather_info = WeatherService()
-            infobar["weather"] = weather_info.get_from_query(query)
-        else:
-            infobar["weather"] = None
-
+        search_processor = SearchService()
+        r = search_processor.search(query, category, pageno, search_language, accept_language)
 
         if category == "image":
             return render_template("images.jinja2",
-                                   results=results, p=1, title=f"{query} - Luna Search",
-                                   q=f"{original_query}",
+                                   results=r["results"], p=1, title=f"{query} - Luna Search",
+                                   q=f"{query}",
                                    theme=request.cookies.get('theme', DEFAULT_THEME),
                                    new_tab=request.cookies.get("new_tab"),
                                    javascript="enabled", DEFAULT_THEME=DEFAULT_THEME,
                                    type="image", search_type="image", repo_url=REPO, lang="ja", safe=0, check="",
-                                   snipp=snipp, infobox=infobox
+                                   snipp=r["snipp"], infobox=r["infobox"]
                                    )
 
+        # スレッドの終了を待機
+        log.dbg("Waiting for infobar_thread")
+        infobar_thread.join()
+        infobar = infobar_thread.get_result()
+
+        log.dbg("Waiting for smartcard_thread")
+        smartcard_thread.join()
+        smart_card = smartcard_thread.get_result()
+
+        log.dbg("Result OK!!!")
+
         return render_template("results.jinja2",
-                               results=results, p=1, title=f"{query} - Luna Search",
-                               q=f"{original_query}",
+                               results=r["results"], p=1, title=f"{query} - Luna Search",
+                               q=f"{query}",
                                theme=request.cookies.get('theme', DEFAULT_THEME),
                                new_tab=request.cookies.get("new_tab"),
                                javascript="enabled", DEFAULT_THEME=DEFAULT_THEME,
                                type=category, search_type="text", repo_url=REPO, lang="ja", safe=0, check="",
-                               snipp=snipp, infobox=infobox, infobar=infobar
+                               snipp=r["snipp"], infobox=r["infobox"], infobar=infobar, smart_card=smart_card
                                )
 
 

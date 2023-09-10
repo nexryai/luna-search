@@ -15,9 +15,8 @@ def warn(message: str):
 
 
 def dbg(message: str):
-    if os.environ['DEBUG_MODE'] == "true":
-        target_file = os.path.splitext(os.path.basename(inspect.stack()[1].filename))[0]
-        sys.stdout.write(f"[{target_file}]\033[90;1m [DEBUG] @{time.time()}\033[0m " + str(message) + "\n")
+    target_file = os.path.splitext(os.path.basename(inspect.stack()[1].filename))[0]
+    sys.stdout.write(f"[{target_file}]\033[90;1m [DEBUG] @{time.time()}\033[0m " + str(message) + "\n")
 
 
 def error(message: str):

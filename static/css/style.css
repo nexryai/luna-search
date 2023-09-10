@@ -978,7 +978,7 @@ p {
 	border-image-slice: 1;
 }
 
-.snipp-warn-full {
+.snipp-full {
     width: 100%;
 }
 
@@ -996,6 +996,12 @@ p {
 .snipp a:hover {
     text-decoration: underline;
 }
+
+.smartcard-link-icons {
+	vertical-align: -4.55px;
+	height: 20px;
+}
+
 
 .clickable {
     cursor: pointer;
