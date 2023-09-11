@@ -114,7 +114,7 @@
                             left: 0;
                             width: 100%;
                             height: 100%;
-                            filter: blur(330px);
+                            filter: blur(330px) opacity(84%);
                             z-index: -1;
                         }
                     </style>
@@ -131,7 +131,7 @@
                     <p style="max-width: 999em;">{{ infobox.content }}</p>
                 {% endif %}
                 {% if smart_card["official_website"] != None %}
-                    <a href="{{ smart_card["official_website"] }}">
+                    <a href="{{ smart_card["official_website"] }}" class="smartcard-links">
                         <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler smartcard-link-icons"
                              width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
                              fill="none"
@@ -145,7 +145,7 @@
                 {% endif %}
                 {% if infobox != None %}
                     {% for url in infobox.urls %}
-                        <a target="_blank" href="{{ url.url }}">
+                        <a target="_blank" href="{{ url.url }}" class="smartcard-links">
                             {% if url.title == "Wikipedia" %}
                                 <svg xmlns="http://www.w3.org/2000/svg"
                                      class="icon icon-tabler icon-tabler-brand-wikipedia smartcard-link-icons"
@@ -177,13 +177,28 @@
                         </a>
                     {% endfor %}
                 {% endif %}
+                {% if smart_card["official_youtube"] != None %}
+                    <a href="https://www.youtube.com/channel/{{ smart_card["official_youtube"] }}"
+                       class="smartcard-links">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler smartcard-link-icons" width="24"
+                             height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
+                             stroke-linecap="round" stroke-linejoin="round">
+                            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                            <path d="M2 8a4 4 0 0 1 4 -4h12a4 4 0 0 1 4 4v8a4 4 0 0 1 -4 4h-12a4 4 0 0 1 -4 -4v-8z"></path>
+                            <path d="M10 9l5 3l-5 3z"></path>
+                        </svg>
+                        YouTube Channel
+                    </a>
+                {% endif %}
+                <br>
             </div>
         {% endif %}
 
         {% if infobar["weather"] != None %}
             <div class="snipp" style="height: 110px;">
                 <div style="float: left;">
-                    <img width="auto" height="90px" src="/img/weathericon/{{ infobar["weather"]["weather"] }}.svg">
+                    <img width="auto" height="90px" alt="{{ infobar["weather"]["weather"] }}"
+                         src="/img/weathericon/{{ infobar["weather"]["weather"] }}.svg">
                 </div>
                 <div style="float: left;padding-left: 10px;"><h2><br>{{ infobar["weather"]["temp_now"] }}℃</h2></div>
                 <div style="float: right;">
@@ -191,12 +206,14 @@
                         <tr>
                             <th><p>{{ infobar["weather"]["d2_disp"] }}</p></th>
                             <th><img width="auto" height="40px" style="vertical-align: middle;"
+                                     alt="{{ infobar["weather"]["weather_d2"] }}"
                                      src="/img/weathericon/{{ infobar["weather"]["weather_d2"] }}.svg"></th>
                             <th><p>{{ infobar["weather"]["maxtemp_d2"] }}℃</p></th>
                         </tr>
                         <tr>
                             <th><p>{{ infobar["weather"]["d3_disp"] }}</p></th>
                             <th><img width="auto" height="40px" style="vertical-align: middle;"
+                                     alt="{{ infobar["weather"]["weather_d3"] }}"
                                      src="/img/weathericon/{{ infobar["weather"]["weather_d3"] }}.svg"></th>
                             <th><p>{{ infobar["weather"]["maxtemp_d3"] }}℃</p></th>
                         </tr>
@@ -227,9 +244,9 @@
             <form>
                 <input type="hidden" name="q" value="{{ q }}">
                 <input type="hidden" name="t" value="{{ type }}">
-                {% set p = request.args.get('p', 0)|int %}
-                {% if p >= 10 %}
-                    <button name="p" value="{{ p - 10 }}">
+                {% set p = request.args.get('p', 1)|int %}
+                {% if p >= 2 %}
+                    <button name="p" value="{{ p - 1 }}">
                         <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-search-nav" width="24"
                              height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
                              stroke-linecap="round" stroke-linejoin="round">
@@ -239,7 +256,7 @@
                         Previous
                     </button>
                 {% endif %}
-                <button name="p" value="{{ p + 10 }}">
+                <button name="p" value="{{ p + 1 }}">
                     Next
                     <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-search-nav" width="24"
                          height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"

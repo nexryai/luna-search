@@ -93,7 +93,7 @@ class SearchService:
             query=query,
             lang=search_language,
             safesearch=0,
-            pageno=1,
+            pageno=int(pageno),
             time_range="",
             engineref_list=use_engines
         )
@@ -117,7 +117,10 @@ class SearchService:
         frea = SearchService()
         results = frea.optimize(results)
 
+        counts = 0
         for result in results:
+            del results[counts]["parsed_url"]
+
             if 'content' in result and result['content']:
                 result['content'] = escape(result['content'][:1024])
             if 'title' in result and result['title']:
@@ -132,6 +135,8 @@ class SearchService:
                     result['publishedDate'] = None
                 else:
                     result['publishedDate'] = webutils.searxng_l10n_timespan(result['publishedDate'])
+
+            counts += 1
 
         log.dbg("Search result was ready!")
 

@@ -18,6 +18,7 @@ from searx.webapp import werkzeug_reloader
 
 from _config import *
 from luna.helpers import detect_lang
+from luna.services.cache import CacheManageService
 from luna.services.emergency import EmergencyService
 from luna.services.smartcard import get_wikidata_id_from_query
 from luna.services.weather import WeatherService
@@ -35,7 +36,6 @@ COMMIT = helpers.latest_commit()
 
 @app.errorhandler(500)
 def internal_error(error):
-
     return render_template('error.jinja2')
 
 
@@ -91,13 +91,6 @@ def suggestions():
     return json.loads(response.text)
 
 
-@app.route("/wikipedia")
-def wikipedia():
-    query = request.args.get("q", "").strip()
-    response = helpers.makeHTMLRequest(f"https://wikipedia.org/w/api.php?action=query&format=json&prop=pageimages&titles={query}&pithumbsize=500")
-    return json.loads(response.text)
-
-
 @app.route("/", methods=["GET", "POST"])
 @app.route("/search", methods=["GET", "POST"])
 def search():
@@ -105,7 +98,7 @@ def search():
     if request.method == "GET":
         # get the `q` query parameter from the URL
         query = request.args.get("q", "").strip()
-        category = request.args.get("t", "").strip()
+        category = request.args.get("t", "text").strip()
         pageno = request.args.get("p", "1").strip()
 
         # クエリがないならトップページ
@@ -129,18 +122,33 @@ def search():
 
         # 非同期でスマートカードの情報取得処理
         def smartcard_task(original_query: str, lang: str):
-            log.dbg("smartcard_task started on thread")
-            if original_query.count(" ") >= 2:
-                return None
+            cs_cache_key = {"original_query": original_query, "lang": lang}
+            sc_cache = CacheManageService(cs_cache_key)
 
-            wikidata_id = get_wikidata_id_from_query(original_query)
+            if sc_cache.exists():
+                result = sc_cache.get()
+                log.dbg("Use cache for smart card!")
+                if result == {"result": None}:
+                    return None
+                else:
+                    return result
+            else:
+                log.dbg("smartcard_task started on thread")
+                if original_query.count(" ") >= 2:
+                    return None
 
-            if wikidata_id is None:
-                return None
+                wikidata_id = get_wikidata_id_from_query(original_query)
 
-            from luna.services.smartcard import SmartcardService
-            smart_card_processor = SmartcardService(wikidata_id)
-            return smart_card_processor.get_info(lang)
+                if wikidata_id is None:
+                    sc_cache.set({"result": None}, 30)
+                    return None
+
+                from luna.services.smartcard import SmartcardService
+                smart_card_processor = SmartcardService(wikidata_id)
+                result = smart_card_processor.get_info(lang)
+                sc_cache.set(result, 30)
+                return result
+
 
         smartcard_thread = LunaThread(target=smartcard_task, args=(query, search_language))
         smartcard_thread.start()
@@ -161,12 +169,24 @@ def search():
         infobar_thread = LunaThread(target=infobar_task, args=(query, search_language))
         infobar_thread.start()
 
-        search_processor = SearchService()
-        r = search_processor.search(query, category, pageno, search_language, accept_language)
+        cache_key = {"query": query, "lang": search_language, "accept_lang": accept_language,
+                     "category": category, "pageno": pageno}
+
+        # キャッシュがあるならそれを使う
+        cache = CacheManageService(cache_key)
+        if cache.exists():
+            log.dbg("Use cache!")
+            r = cache.get()
+        else:
+            search_processor = SearchService()
+            r = search_processor.search(query, category, pageno, search_language, accept_language)
+            # ToDo: 条件改善する
+            if len(r["results"]) > 5:
+                cache.set(r, 3)
 
         if category == "image":
             return render_template("images.jinja2",
-                                   results=r["results"], p=1, title=f"{query} - Luna Search",
+                                   results=r["results"], p=pageno, title=f"{query} - Luna Search",
                                    q=f"{query}",
                                    theme=request.cookies.get('theme', DEFAULT_THEME),
                                    new_tab=request.cookies.get("new_tab"),
@@ -187,7 +207,7 @@ def search():
         log.dbg(f"{query}: Result OK!!!")
 
         return render_template("results.jinja2",
-                               results=r["results"], p=1, title=f"{query} - Luna Search",
+                               results=r["results"], p=pageno, title=f"{query} - Luna Search",
                                q=f"{query}",
                                theme=request.cookies.get('theme', DEFAULT_THEME),
                                new_tab=request.cookies.get("new_tab"),

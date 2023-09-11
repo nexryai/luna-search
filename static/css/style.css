@@ -997,6 +997,11 @@ p {
     text-decoration: underline;
 }
 
+.smartcard-links {
+    display: inline !important;
+    margin-right: 20px;
+}
+
 .smartcard-link-icons {
 	vertical-align: -4.55px;
 	height: 20px;
