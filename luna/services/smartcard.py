@@ -37,6 +37,7 @@ class SmartcardService:
                   "description": description,
                   "official_website": None}
 
+        # 公式サイトに関する情報
         try:
             counts = 0
             result["official_website"] = entity['claims']['P856'][counts]['mainsnak']['datavalue']['value']
@@ -47,9 +48,16 @@ class SmartcardService:
                         result["official_website"] = entity['claims']['P856'][counts]['mainsnak']['datavalue']['value']
 
                 counts += 1
-
         except:
             pass
+
+        # 公式YouTubeを探す
+        try:
+            print(entity['claims']['P2397'])
+            result["official_youtube"] = entity['claims']['P2397'][0]['mainsnak']['datavalue']['value']
+        except:
+            result["official_youtube"] = None
+
 
         return result
 
