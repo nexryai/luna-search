@@ -183,20 +183,20 @@
         {% if infobar["weather"] != None %}
             <div class="snipp" style="height: 110px;">
                 <div style="float: left;">
-                    <img width="auto" height="90px" src="/img/weathericon/{{ infobar["weather"]["weather"] }}.svg">
+                    <img width="auto" height="90px" alt="{{ infobar["weather"]["weather"] }}" src="/img/weathericon/{{ infobar["weather"]["weather"] }}.svg">
                 </div>
                 <div style="float: left;padding-left: 10px;"><h2><br>{{ infobar["weather"]["temp_now"] }}℃</h2></div>
                 <div style="float: right;">
                     <table>
                         <tr>
                             <th><p>{{ infobar["weather"]["d2_disp"] }}</p></th>
-                            <th><img width="auto" height="40px" style="vertical-align: middle;"
+                            <th><img width="auto" height="40px" style="vertical-align: middle;" alt="{{ infobar["weather"]["weather_d2"] }}"
                                      src="/img/weathericon/{{ infobar["weather"]["weather_d2"] }}.svg"></th>
                             <th><p>{{ infobar["weather"]["maxtemp_d2"] }}℃</p></th>
                         </tr>
                         <tr>
                             <th><p>{{ infobar["weather"]["d3_disp"] }}</p></th>
-                            <th><img width="auto" height="40px" style="vertical-align: middle;"
+                            <th><img width="auto" height="40px" style="vertical-align: middle;" alt="{{ infobar["weather"]["weather_d3"] }}"
                                      src="/img/weathericon/{{ infobar["weather"]["weather_d3"] }}.svg"></th>
                             <th><p>{{ infobar["weather"]["maxtemp_d3"] }}℃</p></th>
                         </tr>
