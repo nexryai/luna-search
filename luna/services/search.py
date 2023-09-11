@@ -93,7 +93,7 @@ class SearchService:
             query=query,
             lang=search_language,
             safesearch=0,
-            pageno=1,
+            pageno=int(pageno),
             time_range="",
             engineref_list=use_engines
         )

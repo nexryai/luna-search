@@ -98,7 +98,7 @@ def search():
     if request.method == "GET":
         # get the `q` query parameter from the URL
         query = request.args.get("q", "").strip()
-        category = request.args.get("t", "").strip()
+        category = request.args.get("t", "text").strip()
         pageno = request.args.get("p", "1").strip()
 
         # クエリがないならトップページ
@@ -186,7 +186,7 @@ def search():
 
         if category == "image":
             return render_template("images.jinja2",
-                                   results=r["results"], p=1, title=f"{query} - Luna Search",
+                                   results=r["results"], p=pageno, title=f"{query} - Luna Search",
                                    q=f"{query}",
                                    theme=request.cookies.get('theme', DEFAULT_THEME),
                                    new_tab=request.cookies.get("new_tab"),
@@ -207,7 +207,7 @@ def search():
         log.dbg(f"{query}: Result OK!!!")
 
         return render_template("results.jinja2",
-                               results=r["results"], p=1, title=f"{query} - Luna Search",
+                               results=r["results"], p=pageno, title=f"{query} - Luna Search",
                                q=f"{query}",
                                theme=request.cookies.get('theme', DEFAULT_THEME),
                                new_tab=request.cookies.get("new_tab"),
