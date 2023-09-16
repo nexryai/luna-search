@@ -18,4 +18,4 @@ RUN apt update && apt upgrade -y \
 COPY . .
 
 USER app
-CMD [ "gunicorn", "--workers", "4", "--threads", "1", "server:app" ]
+CMD [ "tini", "--", "python3", "server.py" ]
