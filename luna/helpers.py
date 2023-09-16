@@ -28,10 +28,10 @@ def highlight_query_words(string, query):
 
 
 def latest_commit():
-    if exists(".git/refs/heads/main"):
-        with open('./.git/refs/heads/main') as f:
+    if exists(".git/refs/heads/devel"):
+        with open('./.git/refs/heads/devel') as f:
             return f.readline()
-    return "Not in main branch"
+    return "Not in devel branch"
 
 
 def detect_lang(texts):
