@@ -1,9 +1,12 @@
+import multiprocessing
 import threading
 from html import escape
 import json
 import requests
 import random
 
+import gunicorn
+import gunicorn.app.base
 from flask import (
     Flask,
     render_template,
@@ -26,6 +29,22 @@ from luna.services.search import SearchService
 from luna import helpers
 from luna import log
 from luna.thread import LunaThread
+
+class StandaloneServer(gunicorn.app.base.BaseApplication):
+    def __init__(self, app, options=None):
+        self.options = options or {}
+        self.application = app
+        super().__init__()
+
+    def load_config(self):
+        config = {key: value for key, value in self.options.items()
+                  if key in self.cfg.settings and value is not None}
+        for key, value in config.items():
+            self.cfg.set(key.lower(), value)
+
+    def load(self):
+        return self.application
+
 
 app = Flask(__name__, static_folder="static", static_url_path="")
 app.jinja_env.filters['highlight_query_words'] = helpers.highlight_query_words
@@ -239,6 +258,16 @@ if __name__ == "__main__":
     daemon_thread.start()
 
     log.info("Starting server...")
+    use_workers = multiprocessing.cpu_count()
+    log.info(f"Starting {use_workers} workers")
     log.info(f"Listen on port {PORT}")
 
+    options = {
+        'bind': '%s:%s' % ('0.0.0.0', PORT),
+        'workers': use_workers,
+    }
     app.run(threaded=True, port=PORT)
+
+    # 何故か動かん
+    # StandaloneServer(app, options).run()
+
