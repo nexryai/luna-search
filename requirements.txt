@@ -7,7 +7,7 @@ gunicorn==21.2.0
 requests==2.31.0
 libfrea
 pyfiglet
-pygeonlp==1.2.0
+pygeonlp==1.2.1
 feedparser==6.0.10
 lxml~=4.9.3
 redis==5.0.1
