@@ -1,9 +1,12 @@
+import multiprocessing
 import threading
 from html import escape
 import json
 import requests
 import random
 
+import gunicorn
+import gunicorn.app.base
 from flask import (
     Flask,
     render_template,
@@ -27,11 +30,27 @@ from luna import helpers
 from luna import log
 from luna.thread import LunaThread
 
+class StandaloneServer(gunicorn.app.base.BaseApplication):
+    def __init__(self, app, options=None):
+        self.options = options or {}
+        self.application = app
+        super().__init__()
+
+    def load_config(self):
+        config = {key: value for key, value in self.options.items()
+                  if key in self.cfg.settings and value is not None}
+        for key, value in config.items():
+            self.cfg.set(key.lower(), value)
+
+    def load(self):
+        return self.application
+
+
 app = Flask(__name__, static_folder="static", static_url_path="")
 app.jinja_env.filters['highlight_query_words'] = helpers.highlight_query_words
 app.jinja_env.globals.update(int=int)
 
-COMMIT = helpers.latest_commit()
+_dev_version = helpers.latest_commit()
 
 
 @app.errorhandler(500)
@@ -60,7 +79,7 @@ def settings():
                            new_tab=new_tab,
                            domain=domain,
                            javascript=javascript,
-                           commit=COMMIT,
+                           commit=_dev_version,
                            repo_url=REPO,
                            current_url=request.url
                            )
@@ -109,7 +128,7 @@ def search():
                 css_style = None
             return render_template("search.jinja2", theme=request.cookies.get('theme', DEFAULT_THEME),
                                    javascript=request.cookies.get('javascript', 'enabled'), DEFAULT_THEME=DEFAULT_THEME,
-                                   css_style=css_style, repo_url=REPO, commit=COMMIT)
+                                   css_style=css_style, repo_url=REPO, commit=_dev_version)
 
         query = query.replace("　", " ")
 
@@ -187,7 +206,7 @@ def search():
         if category == "image":
             return render_template("images.jinja2",
                                    results=r["results"], p=pageno, title=f"{query} - Luna Search",
-                                   q=f"{query}",
+                                   q=f"{query}", commit=_dev_version,
                                    theme=request.cookies.get('theme', DEFAULT_THEME),
                                    new_tab=request.cookies.get("new_tab"),
                                    javascript="enabled", DEFAULT_THEME=DEFAULT_THEME,
@@ -208,7 +227,7 @@ def search():
 
         return render_template("results.jinja2",
                                results=r["results"], p=pageno, title=f"{query} - Luna Search",
-                               q=f"{query}",
+                               q=f"{query}", commit=_dev_version, debug=False,
                                theme=request.cookies.get('theme', DEFAULT_THEME),
                                new_tab=request.cookies.get("new_tab"),
                                javascript="enabled", DEFAULT_THEME=DEFAULT_THEME,
@@ -239,6 +258,16 @@ if __name__ == "__main__":
     daemon_thread.start()
 
     log.info("Starting server...")
+    use_workers = multiprocessing.cpu_count()
+    log.info(f"Starting {use_workers} workers")
     log.info(f"Listen on port {PORT}")
 
+    options = {
+        'bind': '%s:%s' % ('0.0.0.0', PORT),
+        'workers': use_workers,
+    }
     app.run(threaded=True, port=PORT)
+
+    # 何故か動かん
+    # StandaloneServer(app, options).run()
+

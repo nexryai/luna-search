@@ -1024,6 +1024,42 @@ p {
     font-size: 16px;
 }
 
+.dev-ticker {
+	position: fixed;
+	top: 0;
+	left: 0;
+	z-index: 2147483647;
+	color: #ff0;
+	background: rgba(0, 0, 0, 0.5);
+	padding: 4px 5px;
+	font-size: 14px;
+	pointer-events: none;
+	user-select: none;
+}
+
+.version-ticker {
+	position: fixed;
+	bottom: 0;
+	right: 0;
+	z-index: 2147483647;
+	color: #ff0;
+	background: rgba(0, 0, 0, 0.5);
+	padding: 4px 5px;
+	font-size: 14px;
+	pointer-events: none;
+	user-select: none;
+}
+
+@keyframes dev-ticker-blink {
+	0% { opacity: 1; }
+	50% { opacity: 0; }
+	100% { opacity: 1; }
+}
+
+.dev-ticker span {
+    animation: dev-ticker-blink 2s infinite;
+}
+
 @media only screen and (max-width: 1320px) {
 
     .snip,

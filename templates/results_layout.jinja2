@@ -23,6 +23,10 @@
 </head>
 
 <body>
+    {% if debug %}
+        <div class="dev-ticker"><span>DEBUG MODE -- DO NOT USE IN PRODUCTION</span></div>
+        <div class="version-ticker"><span>Luna Search 0.10-devel-{{ commit }}</span></div>
+    {% endif %}
     <form action="/search" id="prev-next-form" class="results-search-container" method="get" autocomplete="off">
         <h1 class="logomobile"><a class="no-decoration" href="./">Luna</a></h1>
         <div class="wrapper-results">
@@ -43,7 +47,7 @@
             </svg>
         </a>
         <a href="/settings" class="settings-results-link">Settings</a>
-    </div>      
+    </div>
         <div class="sub-search-button-wrapper">
             {% if type == "text" %}
             <div class="category-box">
@@ -55,7 +59,7 @@
                     </svg>
                 </button>
                 <button name="t" value="text" class="clickable search-active">Web</button>
-            </div>                  
+            </div>
             {% else %}
             <div class="category-box">
                 <button id="sub-search-wrapper-ico" class="clickable" name="t" value="text">
@@ -66,7 +70,7 @@
                     </svg>
                 </button>
                 <button name="t" value="text" class="clickable">Web</button>
-            </div>      
+            </div>
             {% endif %}
             {% if type == "image" %}
             <div class="category-box">
@@ -161,18 +165,6 @@
                 <path d="M14 4l-4 16"></path>
             </svg>
             Source code
-        </a>
-        <a target="_blank" class="mobile-none" href="{{ repo_url }}/commit/{{ commit }}">
-            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-bottom" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                <path d="M7 18m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0"></path>
-                <path d="M7 6m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0"></path>
-                <path d="M17 6m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0"></path>
-                <path d="M7 8l0 8"></path>
-                <path d="M9 18h6a2 2 0 0 0 2 -2v-5"></path>
-                <path d="M14 14l3 -3l3 3"></path>
-            </svg>
-            Commit: {{ commit }}
         </a>
     </div>
 </body>
