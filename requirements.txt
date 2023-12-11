@@ -8,7 +8,7 @@ requests==2.31.0
 libfrea
 pyfiglet
 pygeonlp==1.2.1
-feedparser==6.0.10
+feedparser==6.0.11
 lxml~=4.9.3
 redis==5.0.1
 pygments==2.16.1
